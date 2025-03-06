@@ -27,8 +27,9 @@ const MainMenu = () => {
         <div className='bottom-form'>
           <label htmlFor="availability" className='input-label'>Availability</label>
           <select id='availability' className="dropdown">
-            <option value="available">Available</option>
-            <option value="unavailable">Unavailable</option>
+            <option value="available">In stock</option>
+            <option value="unavailable">Out of stock</option>
+            <option value="all">All</option>
           </select>
 
           <button className="search-btn">Search</button>
