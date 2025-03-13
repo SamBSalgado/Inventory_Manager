@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface Product {
-  id: number,
+ export interface Product {
+  id?: number,
   name: string,
   category: string,
   quantityInStock: number,
@@ -50,6 +50,36 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Error desconocido.";
+      })
+      .addCase(createProduct.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+        console.log("Product CREATED.");
+      })
+      .addCase(createProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.loading = true;
+        state.error = action.error.message || "Error al crear el producto.";
+      })
+      .addCase(updateProduct.fulfilled, (state, action: PayloadAction<Product>) => {
+        state.loading = false;
+        const index = state.products.findIndex(product => product.id === action.payload.id);
+        if (index !== -1) {
+          state.products[index] = action.payload;
+        }
+        state.error = null;
+        console.log("Producto MODIFICADO.");
+      })
+      .addCase(updateProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Error al modificar el producto.";
       });
   }
 });
@@ -72,6 +102,42 @@ export const fetchProducts = createAsyncThunk(
     const response = await fetch(`http://localhost:9090/products?${queryParams.toString()}`);
     if (!response.ok) {
       throw new Error("Error al obtener productos");
+    }
+    return await response.json();
+  }
+);
+
+export const createProduct = createAsyncThunk(
+  "products/createProduct",
+  async (productData: Product) => {
+    const response = await fetch('http://localhost:9090/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al crear el producto.");
+    }
+    return await response.json();
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async (productData: Product) => {
+    const response = await fetch(`http://localhost:9090/products/${productData.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al modificar el producto.");
     }
     return await response.json();
   }
