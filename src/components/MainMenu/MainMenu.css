@@ -184,3 +184,25 @@ h2 {
   font-size: 14px;
   color: #666;
 }
+
+th, td {
+  border: 1px solid #000000;
+  padding: 8px;
+}
+
+th {
+  background-color: #a9a9a9;
+}
+
+.edit-btn {
+  cursor: pointer;
+  padding: 7px 15px;
+  background-color: #ffa20c;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+}
+
+.edit-btn:hover {
+  background-color: #e38c00;
+}
