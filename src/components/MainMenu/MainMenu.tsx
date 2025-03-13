@@ -1,14 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './MainMenu.css';
 import { AppDispatch, RootState } from '../../state/store';
-import { fetchProducts, setFilters } from '../../state/product/productSlice';
-import React, { useEffect } from 'react';
+import { fetchProducts, setFilters, Product } from '../../state/product/productSlice';
+import React, { useEffect, useState } from 'react';
+import ProductModal from '../../modals/create_edit/create_edit-Modal';
 
 const MainMenu = () => {
 
   const { products } = useSelector((state: RootState) => state.product); //Esto es para poder mostrar el producto
   const dispatch = useDispatch<AppDispatch>();
   const filters = useSelector((state: RootState) => state.product.filters);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     dispatch(fetchProducts({}));
@@ -26,6 +31,22 @@ const MainMenu = () => {
   const handleSearch = () => {
     console.log("Buscando con filtros:", filters);
     dispatch((fetchProducts(filters)));
+  };
+
+  const openCreateModal = () => {
+    setModalMode('create');
+    setSelectedProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (product: Product) => {
+    setModalMode('edit');
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   // const handleClearFilters = () => {
@@ -105,12 +126,45 @@ const MainMenu = () => {
         </div>
       </div>
 
-      <button className="new_product-btn">New product</button>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>{product.name} - {product.category} </li>
-        ))}
-      </ul>
+      <button className="new_product-btn" onClick={openCreateModal}>New product</button>
+      <div className="product-list">
+        <table className="products-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.category}</td>
+                <td>{product.quantityInStock}</td>
+                <td>${product.unitPrice.toFixed(2)}</td>
+                <td>
+                  <button 
+                    className="edit-btn" 
+                    onClick={() => openEditModal(product)}
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      <ProductModal 
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        product={selectedProduct}
+        mode={modalMode}
+      />
     </div>
   );
 };
