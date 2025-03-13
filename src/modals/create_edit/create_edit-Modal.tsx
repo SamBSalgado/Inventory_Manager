@@ -38,7 +38,7 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
     } else {
       setFormData({
         name: '',
-        category: '',
+        category: 'food',
         quantityInStock: 0,
         unitPrice: 0,
         expirationDate: '',
@@ -58,6 +58,8 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("Datos enviados al backend: ", formData);
 
     if (mode === 'create') {
       dispatch(createProduct(formData));
