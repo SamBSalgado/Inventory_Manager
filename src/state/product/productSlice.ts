@@ -18,14 +18,24 @@ interface productsState {
   };
   loading: boolean;
   error: string | null;
+  metrics: Metrics[];
 }
 
 const initialState: productsState = {
   products: [],
   filters: {name: "", category: [], availability: ""},
   loading: false,
-  error: null
+  error: null,
+  metrics: [],
 };
+
+export interface Metrics {
+  category: string;
+  totalProducts: number;
+  totalStockUnits: number;
+  totalStockValue: number;
+  avgPrice: number;
+}
 
 const productsSlice = createSlice({
   name: "products",
@@ -80,6 +90,19 @@ const productsSlice = createSlice({
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Error al modificar el producto.";
+      })
+      .addCase(getMetrics.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.metrics = action.payload;
+      })
+      .addCase(getMetrics.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMetrics.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   }
 });
@@ -140,6 +163,22 @@ export const updateProduct = createAsyncThunk(
       throw new Error("Error al modificar el producto.");
     }
     return await response.json();
+  }
+);
+
+export const getMetrics = createAsyncThunk(
+  'products/getMetrics',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch('http://localhost:9090/products/metrics');
+      if (!response.ok) {
+        throw new Error("Error al obtener las métricas.");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue((error as Error).message);
+    }
   }
 );
 

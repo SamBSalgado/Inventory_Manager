@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from '../../state/store';
 import { fetchProducts, setFilters, Product } from '../../state/product/productSlice';
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
+import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
 
 const MainMenu = () => {
 
@@ -165,6 +166,10 @@ const MainMenu = () => {
         product={selectedProduct}
         mode={modalMode}
       />
+
+      <div className='metrics-section'>
+        <InventoryMetrics></InventoryMetrics>
+      </div>
     </div>
   );
 };

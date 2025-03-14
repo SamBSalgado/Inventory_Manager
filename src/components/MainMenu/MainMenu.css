@@ -206,3 +206,7 @@ th {
 .edit-btn:hover {
   background-color: #e38c00;
 }
+
+.metrics-section {
+  margin-bottom: 20px;
+}
