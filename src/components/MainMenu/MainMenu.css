@@ -194,6 +194,11 @@ th {
   background-color: #a9a9a9;
 }
 
+.actions-td {
+  display: flex;
+  gap: 10px;
+}
+
 .edit-btn {
   cursor: pointer;
   padding: 7px 15px;
@@ -205,6 +210,19 @@ th {
 
 .edit-btn:hover {
   background-color: #e38c00;
+}
+
+.delete-btn {
+  cursor: pointer;
+  padding: 7px 15px;
+  background-color: #f73636;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+}
+
+.delete-btn:hover {
+  background-color: #ca2b2b;
 }
 
 .metrics-section {

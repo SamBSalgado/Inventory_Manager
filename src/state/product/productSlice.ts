@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
  export interface Product {
-  id?: number,
+  id: number,
   name: string,
   category: string,
   quantityInStock: number,
@@ -103,6 +103,20 @@ const productsSlice = createSlice({
       .addCase(getMetrics.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action: PayloadAction<number>) => {
+        state.error = null;
+        state.loading = false;
+        state.products = state.products.filter(product => product.id !== action.payload);
+        console.log("Producto eliminado.");
+      })
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Error al eliinar el producto.";
       });
   }
 });
@@ -163,6 +177,20 @@ export const updateProduct = createAsyncThunk(
       throw new Error("Error al modificar el producto.");
     }
     return await response.json();
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  "products/deleteProduct",
+  async (productId: number) => {
+    const response = await fetch(`http://localhost:9090/products/${productId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar el producto.");
+    }
+    return productId;
   }
 );
 
