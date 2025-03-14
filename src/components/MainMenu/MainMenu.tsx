@@ -150,7 +150,7 @@ const MainMenu = () => {
                 <td>{product.category}</td>
                 <td>{product.quantityInStock}</td>
                 <td>${product.unitPrice.toFixed(2)}</td>
-                <td>
+                <td className="actions-td">
                   <button 
                     className="edit-btn" 
                     onClick={() => openEditModal(product)}
