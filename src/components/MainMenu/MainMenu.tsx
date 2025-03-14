@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './MainMenu.css';
 import { AppDispatch, RootState } from '../../state/store';
-import { fetchProducts, setFilters, Product } from '../../state/product/productSlice';
+import { fetchProducts, setFilters, Product, deleteProduct } from '../../state/product/productSlice';
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
 import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
@@ -49,6 +49,10 @@ const MainMenu = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleDelete = (productId: number) => {
+    dispatch(deleteProduct(productId));
+  } 
 
   // const handleClearFilters = () => {
   //   dispatch(setFilters({ name: "", category: [], availability: "" }));
@@ -152,6 +156,13 @@ const MainMenu = () => {
                     onClick={() => openEditModal(product)}
                   >
                     Edit
+                  </button>
+
+                  <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
