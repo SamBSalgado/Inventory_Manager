@@ -194,6 +194,31 @@ th {
   background-color: #a9a9a9;
 }
 
+.toggle-stock-btn {
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reset-stock {
+  background-color: #f73636;
+  color: white;
+  border: 1px solid #f73636;
+}
+
+.reset-stock:hover {
+  background-color: #ff5757;
+}
+
+.restore-stock {
+  background-color: #4a90e2;
+  color: white;
+  border: 1px solid #4a90e2;
+}
+
+.restore-stock:hover {
+  background-color: #5da8ff;
+}
+
 .actions-td {
   display: flex;
   gap: 10px;
