@@ -27,31 +27,28 @@ const InventoryMetrics: React.FC = () => {
 
   return (
     <div className="inventory-metrics">
-      <h2>Métricas de Inventario por Categoría</h2>
-      <div className="metrics-grid">
-        {metrics.map((metric) => (
-          <div key={metric.category} className="metric-card">
-            <h3>{metric.category.charAt(0).toUpperCase() + metric.category.slice(1)}</h3>
-            <div className="metric-content">
-              <div className="metric-item">
-                <span className="metric-label">Total Productos:</span>
-                <span className="metric-value">{metric.totalProducts}</span>
-              </div>
-              <div className="metric-item">
-                <span className="metric-label">Unidades en Stock:</span>
-                <span className="metric-value">{metric.totalStockUnits}</span>
-              </div>
-              <div className="metric-item">
-                <span className="metric-label">Valor Total:</span>
-                <span className="metric-value">${metric.totalStockValue}</span>
-              </div>
-              <div className="metric-item">
-                <span className="metric-label">Precio Promedio:</span>
-                <span className="metric-value">${metric.avgPrice.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-        ))}
+      <h2>Inventory metrics</h2>
+      <div className="metrics-table-container">
+        <table className="metrics-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Total products in Stock</th>
+              <th>Total value in Stock</th>
+              <th>Average price in Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {metrics.map((metric) => (
+              <tr key={metric.category}>
+                <td className="category-cell">{metric.category.charAt(0).toUpperCase() + metric.category.slice(1)}</td>
+                <td>{metric.totalStockUnits}</td>
+                <td>${metric.totalStockValue.toFixed(2)}</td>
+                <td>${metric.avgPrice.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
