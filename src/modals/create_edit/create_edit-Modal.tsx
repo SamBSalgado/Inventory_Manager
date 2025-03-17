@@ -51,6 +51,8 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
 
     if (name === 'quantityInStock' || name === 'unitPrice') {
       setFormData({ ...formData, [name]: Number(value) });
+    } else if (name === 'name' && value.length > 120) {
+      setFormData({ ...formData, [name]: value.slice(0, 120) });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -64,7 +66,7 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
     if (mode === 'create') {
       dispatch(createProduct(formData));
     } else if (mode === 'edit' && product?.id) {
-      dispatch(updateProduct(formData));
+      dispatch(updateProduct({ ...formData, id: product.id }));
     }
 
     onClose();
@@ -91,7 +93,8 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
               name="name" 
               value={formData.name} 
               onChange={handleChange} 
-              required 
+              required
+              maxLength={120}
             />
           </div>
           
