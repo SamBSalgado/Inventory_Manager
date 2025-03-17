@@ -74,6 +74,40 @@ const productsSlice = createSlice({
         state.loading = true;
         state.error = action.error.message || "Error al crear el producto.";
       })
+      .addCase(setProductInStock.fulfilled, (state, action: PayloadAction<Product>) => {
+        state.loading = false;
+        const index = state.products.findIndex((product: Product) => product.id === action.payload.id);
+        if (index !== -1) {
+          state.products[index] = action.payload;
+        }
+        state.error = null;
+        console.log("Stock actualizado a 10.");
+      })
+      .addCase(setProductInStock.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(setProductInStock.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Error al actualizar el stock a 10.";
+      })
+      .addCase(setProductOutOfStock.fulfilled, (state, action: PayloadAction<Product>) => {
+        state.loading = false;
+        state.error = null;
+        const index = state.products.findIndex((product: Product) => product.id === action.payload.id);
+        if (index !== -1) {
+          state.products[index] = action.payload;
+        }
+        console.log("Stock actualizado a 0.");
+      })
+      .addCase(setProductOutOfStock.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(setProductOutOfStock.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Error al actualizar el stock a 0.";
+      })
       .addCase(updateProduct.fulfilled, (state, action: PayloadAction<Product>) => {
         state.loading = false;
         const index = state.products.findIndex(product => product.id === action.payload.id);
@@ -139,6 +173,32 @@ export const fetchProducts = createAsyncThunk(
     const response = await fetch(`http://localhost:9090/products?${queryParams.toString()}`);
     if (!response.ok) {
       throw new Error("Error al obtener productos");
+    }
+    return await response.json();
+  }
+);
+
+export const setProductInStock = createAsyncThunk(
+  "products/setProductInStock",
+  async (productId: number) => {
+    const response = await fetch(`http://localhost:9090/products/${productId}/instock`, {
+      method: 'PUT',
+    });
+    if (!response.ok) {
+      throw new Error("Error al actualizar el stock.");
+    }
+    return await response.json();
+  }
+);
+
+export const setProductOutOfStock = createAsyncThunk(
+  "products/setProductOutOfStock",
+  async(productId: number) => {
+    const response = await fetch(`http://localhost:9090/products/${productId}/outofstock`, {
+      method: 'PUT',
+    });
+    if (!response.ok) {
+      throw new Error("Error al actualizar el stock.");
     }
     return await response.json();
   }
