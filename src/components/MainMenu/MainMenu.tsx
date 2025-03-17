@@ -145,10 +145,11 @@ const MainMenu = () => {
           <thead>
             <tr>
               <th>Toggle stock</th>
-              <th>Name</th>
               <th>Category</th>
-              <th>Quantity</th>
+              <th>Name</th>
               <th>Price</th>
+              <th>Expiration Date</th>
+              <th>Stock</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -156,10 +157,11 @@ const MainMenu = () => {
             {products.map((product) => (
               <tr key={product.id}>
                 <td><button className={`toggle-stock-btn ${product.quantityInStock > 0 ? "reset-stock" : "restore-stock"}`} onClick={() => handleStockChange(product)}>{product.quantityInStock > 0 ? "Reset stock" : "Restore default stock"}</button></td>
-                <td>{product.name}</td>
                 <td>{product.category}</td>
-                <td>{product.quantityInStock}</td>
+                <td>{product.name}</td>
                 <td>${product.unitPrice.toFixed(2)}</td>
+                <td>{product.expirationDate}</td>
+                <td>{product.quantityInStock}</td>
                 <td className="actions-td">
                   <button 
                     className="edit-btn" 
