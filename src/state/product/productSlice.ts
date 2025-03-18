@@ -11,6 +11,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface productsState {
   products: Product[];
+  categories: string[];
   filters: {
     name: string;
     category: string[];
@@ -23,6 +24,7 @@ interface productsState {
 
 const initialState: productsState = {
   products: [],
+  categories: [],
   filters: {name: "", category: [], availability: ""},
   loading: false,
   error: null,
@@ -60,6 +62,19 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Error desconocido.";
+      })
+      .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<string[]>) => {
+        state.loading = false;
+        state.categories = action.payload;
+        console.log("CATEGORIES fetched.");
+      })
+      .addCase(fetchCategories.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCategories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Error al obtener las categorías.";
       })
       .addCase(createProduct.fulfilled, (state) => {
         state.loading = false;
@@ -154,6 +169,17 @@ const productsSlice = createSlice({
       });
   }
 });
+
+export const fetchCategories = createAsyncThunk(
+  "products/fetchCategories",
+  async () => {
+    const response = await fetch("http://localhost:9090/products/categories");
+    if (!response.ok) {
+      throw new Error("Error al obtener categorías");
+    }
+    return await response.json();
+  }
+);
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",

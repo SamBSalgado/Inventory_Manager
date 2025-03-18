@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../state/store";
 import './create_edit-Modal.css';
-import { createProduct, updateProduct } from "../../state/product/productSlice";
+import { createProduct, updateProduct, fetchCategories } from "../../state/product/productSlice";
 
 
 interface Product {
@@ -23,6 +23,9 @@ interface productModalProps {
 
 const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, mode }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const categories = useSelector((state: RootState) => state.product.categories);
+  const [newCategory, setNewCategory] = useState<string>("");
+  const [showNewCategoryInput, setShowNewcategoryInput] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<Product>({
     name: '',
@@ -33,18 +36,24 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
   });
 
   useEffect(() => {
+    if (isOpen) {
+      dispatch(fetchCategories());
+    }
+  }, [isOpen, dispatch]);
+
+  useEffect(() => {
     if (mode == 'edit' && product) {
       setFormData({ ...product });
     } else {
       setFormData({
         name: '',
-        category: 'food',
+        category: categories.length > 0 ? categories[0] : '',
         quantityInStock: 0,
         unitPrice: 0,
         expirationDate: '',
       });
     }
-  }, [product, mode, isOpen]);
+  }, [product, mode, isOpen, categories]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -53,9 +62,29 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
       setFormData({ ...formData, [name]: Number(value) });
     } else if (name === 'name' && value.length > 120) {
       setFormData({ ...formData, [name]: value.slice(0, 120) });
+    } else if (name === 'category' && value === 'new') {
+      setShowNewcategoryInput(true);
     } else {
       setFormData({ ...formData, [name]: value });
     }
+  };
+
+  const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewCategory(e.target.value);
+  };
+
+  const handleAddNewCategory = () => {
+    if (newCategory.trim()) {
+      setFormData({ ...formData, category: newCategory.trim() });
+      setShowNewcategoryInput(false);
+      setNewCategory("");
+    }
+  };
+
+  const cancelNewcategory = () => {
+    setShowNewcategoryInput(false);
+    setNewCategory("");
+    setFormData({ ...formData, category: categories.length > 0 ? categories[0] : '' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -81,7 +110,7 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
       <div className="modal-container">
         <div className="modal-header">
           <h2>{mode === 'create' ? 'Add New Product' : 'Edit Product'}</h2>
-          <button className="close-button" onClick={onClose}>×</button>
+          <button className="close-button" onClick={onClose}>x</button>
         </div>
         
         <form onSubmit={handleSubmit}>
@@ -100,17 +129,39 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
           
           <div className="form-group">
             <label htmlFor="category">Category</label>
-            <select 
-              id="category" 
-              name="category" 
-              value={formData.category} 
-              onChange={handleChange}
-              required
-            >
-              <option value="food">Food</option>
-              <option value="electronics">Electronics</option>
-              <option value="clothing">Clothing</option>
-            </select>
+            {!showNewCategoryInput ? (
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+              >
+                {categories.length > 0 ? (
+                  categories.map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))
+                ) : (
+                  <option value="">No categories available</option>
+                )}
+                <option value="new">+ Add new category</option>
+                </select>
+            ) : (
+              <div className="new-category-container">
+                <input
+                type="text"
+                id="newCategory"
+                value={newCategory}
+                onChange={handleNewCategoryChange}
+                placeholder="Enter new category name"
+                required
+                />
+                <div className="new-category-actions">
+                  <button type="button" onClick={handleAddNewCategory}>Add</button>
+                  <button type="button" onClick={cancelNewcategory}>Cancel</button>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="form-group">
