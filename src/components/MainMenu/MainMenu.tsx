@@ -5,6 +5,7 @@ import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, s
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
 import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
+import DataTable, { TableColumn } from 'react-data-table-component';
 
 const MainMenu = () => {
 
@@ -83,6 +84,113 @@ const MainMenu = () => {
     }
   };
 
+  const columns: TableColumn<Product>[] = [
+    {
+      name: 'Toggle Stock',
+      cell: (row: Product) => (
+        <button 
+          className={`toggle-stock-btn ${row.quantityInStock > 0 ? "reset-stock" : "restore-stock"}`} 
+          onClick={() => handleStockChange(row)}
+        >
+          {row.quantityInStock > 0 ? "Reset stock" : "Restore default stock"}
+        </button>
+      ),
+      ignoreRowClick: true,
+      width: '170px',
+    },
+    {
+      name: 'Category',
+      selector: row => row.category || '',  // Aseguramos que no sea undefined
+      sortable: true,
+      width: '150px',
+      id: 'category',
+    },
+    {
+      name: 'Name',
+      selector: row => row.name || '',  // Aseguramos que no sea undefined
+      sortable: true,
+      width: '200px',
+      id: 'name',
+    },
+    {
+      name: 'Price',
+      selector: row => row.unitPrice,
+      format: row => `$${row.unitPrice.toFixed(2)}`,
+      sortable: true,
+      width: '120px',
+    },
+    {
+      name: 'Expiration Date',
+      selector: row => {
+        return row.expirationDate ? new Date(row.expirationDate).toLocaleDateString() : '';
+      },
+      sortable: true,
+      width: '150px',
+    },
+    {
+      name: 'Stock',
+      selector: row => row.quantityInStock,
+      sortable: true,
+      width: '100px',
+    },
+    {
+      name: 'Actions',
+      cell: (row: Product) => (
+        <div className="actions-td">
+          <button 
+            className="edit-btn" 
+            onClick={() => openEditModal(row)}
+          >
+            Edit
+          </button>
+          <button
+            className="delete-btn"
+            onClick={() => handleDelete(row.id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      width: '200px',
+    },
+  ];
+
+  const customStyles = {
+    table: {
+      style: {
+        width: '100%',
+      },
+    },
+    rows: {
+      style: {
+        minHeight: '60px',
+      },
+    },
+    headCells: {
+      style: {
+        fontSize: '14px',
+        fontWeight: 'bold',
+        backgroundColor: '#f3f4f6',
+        paddingLeft: '16px',
+        paddingRight: '16px',
+      },
+    },
+    cells: {
+      style: {
+        paddingLeft: '16px',
+        paddingRight: '16px',
+      },
+    },
+  };
+
+  const paginationComponentOptions = {
+    rowsPerPageText: 'Products per page:',
+    rangeSeparatorText: 'of',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'All',
+  };
+
   // const handleClearFilters = () => {
   //   dispatch(setFilters({ name: "", category: [], availability: "" }));
   //   setHasSearched(false);
@@ -154,46 +262,21 @@ const MainMenu = () => {
 
       <button className="new_product-btn" onClick={openCreateModal}>New product</button>
       <div className="product-list">
-        <table className="products-table">
-          <thead>
-            <tr>
-              <th>Toggle stock</th>
-              <th>Category</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Expiration Date</th>
-              <th>Stock</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td><button className={`toggle-stock-btn ${product.quantityInStock > 0 ? "reset-stock" : "restore-stock"}`} onClick={() => handleStockChange(product)}>{product.quantityInStock > 0 ? "Reset stock" : "Restore default stock"}</button></td>
-                <td>{product.category}</td>
-                <td>{product.name}</td>
-                <td>${product.unitPrice.toFixed(2)}</td>
-                <td>{product.expirationDate}</td>
-                <td>{product.quantityInStock}</td>
-                <td className="actions-td">
-                  <button 
-                    className="edit-btn" 
-                    onClick={() => openEditModal(product)}
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(product.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <DataTable
+          columns={columns}
+          data={products}
+          pagination
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[5, 10, 15, 20]}
+          paginationComponentOptions={paginationComponentOptions}
+          customStyles={customStyles}
+          noDataComponent="No products found"
+          defaultSortFieldId="name"
+          defaultSortAsc={true}
+          highlightOnHover
+          pointerOnHover
+          responsive
+        />
       </div>
       
       <ProductModal 
