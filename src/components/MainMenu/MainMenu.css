@@ -1,14 +1,8 @@
 .main-menu {
-  max-width: 1000px;
+  max-width: 1090px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
 }
 
 .filters {
@@ -70,13 +64,7 @@ h2 {
   min-width: 150px;
 }
 
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-left: auto;
-}
-
-.search-btn, .clear-btn {
+.search-btn {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -94,15 +82,6 @@ h2 {
   background-color: #3a80d2;
 }
 
-.clear-btn {
-  background-color: #e2e2e2;
-  color: #333;
-}
-
-.clear-btn:hover {
-  background-color: #d2d2d2;
-}
-
 .new_product-btn {
   padding: 10px 20px;
   background-color: #4caf50;
@@ -118,55 +97,12 @@ h2 {
   background-color: #3d9c40;
 }
 
-.status-message {
-  text-align: center;
-  color: #666;
-  margin: 20px 0;
-}
-
-.error-message {
-  text-align: center;
-  color: #e74c3c;
-  margin: 20px 0;
-}
-
-.products-container {
-  margin-top: 20px;
-}
-
-.products-container h3 {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-}
-
 .product-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 15px;
-}
-
-.product-item {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 15px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.product-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.product-header {
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  flex-direction: column;
+  overflow-x: auto;
+  width: 100%;
 }
 
 .product-category {
@@ -175,23 +111,6 @@ h2 {
   font-size: 12px;
   padding: 3px 8px;
   border-radius: 12px;
-}
-
-.product-details {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-size: 14px;
-  color: #666;
-}
-
-th, td {
-  border: 1px solid #000000;
-  padding: 8px;
-}
-
-th {
-  background-color: #a9a9a9;
 }
 
 .toggle-stock-btn {
