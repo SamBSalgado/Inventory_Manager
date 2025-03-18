@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './MainMenu.css';
 import { AppDispatch, RootState } from '../../state/store';
-import { fetchProducts, setFilters, Product } from '../../state/product/productSlice';
+import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock } from '../../state/product/productSlice';
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
 import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
@@ -48,6 +48,18 @@ const MainMenu = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDelete = (productId: number) => {
+    dispatch(deleteProduct(productId));
+  }
+
+  const handleStockChange = (product: Product) => {
+    if (product.quantityInStock > 0) {
+      dispatch(setProductOutOfStock(product.id));
+    } else {
+      dispatch(setProductInStock(product.id));
+    }
   };
 
   // const handleClearFilters = () => {
@@ -132,26 +144,37 @@ const MainMenu = () => {
         <table className="products-table">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Toggle stock</th>
               <th>Category</th>
-              <th>Quantity</th>
+              <th>Name</th>
               <th>Price</th>
+              <th>Expiration Date</th>
+              <th>Stock</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product) => (
               <tr key={product.id}>
-                <td>{product.name}</td>
+                <td><button className={`toggle-stock-btn ${product.quantityInStock > 0 ? "reset-stock" : "restore-stock"}`} onClick={() => handleStockChange(product)}>{product.quantityInStock > 0 ? "Reset stock" : "Restore default stock"}</button></td>
                 <td>{product.category}</td>
-                <td>{product.quantityInStock}</td>
+                <td>{product.name}</td>
                 <td>${product.unitPrice.toFixed(2)}</td>
-                <td>
+                <td>{product.expirationDate}</td>
+                <td>{product.quantityInStock}</td>
+                <td className="actions-td">
                   <button 
                     className="edit-btn" 
                     onClick={() => openEditModal(product)}
                   >
                     Edit
+                  </button>
+
+                  <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>

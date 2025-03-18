@@ -1,81 +1,70 @@
 .inventory-metrics {
   margin: 20px 0;
   padding: 15px;
+  background-color: #f8f9fa;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .inventory-metrics h2 {
+  color: #333333;
   margin-bottom: 15px;
-  color: #333;
   text-align: center;
+  font-size: 1.5rem;
 }
 
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 15px;
+.metrics-table-container {
+  overflow-x: auto;
 }
 
-.metric-card {
-  background-color: white;
-  border-radius: 6px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.metric-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.metrics-table th,
+.metrics-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid #dddddd;
 }
 
-.metric-card h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #2c3e50;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-
-.metric-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.metric-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.metric-label {
-  font-weight: 500;
-  color: #555;
-}
-
-.metric-value {
+.metrics-table th {
+  background-color: #4a6fa5;
+  color: #ffffff;
   font-weight: 600;
-  color: #2c3e50;
 }
 
-.metrics-loading {
-  text-align: center;
+.metrics-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.metrics-table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.category-cell {
+  font-weight: 600;
+  text-align: left;
+}
+
+.metrics-loading,
+.metrics-error,
+.metrics-empty {
   padding: 20px;
-  color: #666;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
 }
 
 .metrics-error {
-  text-align: center;
-  padding: 20px;
-  color: #e74c3c;
-  font-weight: 500;
+  color: #dc3545;
 }
 
 .metrics-empty {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-  font-style: italic;
+  color: #6c757d;
 }
