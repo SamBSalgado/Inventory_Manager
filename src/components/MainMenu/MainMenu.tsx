@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './MainMenu.css';
 import { AppDispatch, RootState } from '../../state/store';
-import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock } from '../../state/product/productSlice';
+import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock, fetchCategories } from '../../state/product/productSlice';
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
 import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
@@ -9,24 +9,44 @@ import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
 const MainMenu = () => {
 
   const { products } = useSelector((state: RootState) => state.product); //Esto es para poder mostrar el producto
+  const categories = useSelector((state: RootState) => state.product.categories);
   const dispatch = useDispatch<AppDispatch>();
   const filters = useSelector((state: RootState) => state.product.filters);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectAllCategories, setSelectAllCategories] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProducts({}));
+    dispatch(fetchCategories());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (categories.length > 0 && filters.category.length === categories.length) {
+      setSelectAllCategories(true);
+    } else {
+      setSelectAllCategories(false);
+    }
+  }, [filters.category, categories]);
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
-    const updatedCategories = checked
+    if (value === 'all') {
+      if (checked) {
+        dispatch(setFilters({ category: [...categories] }));
+      } else {
+        dispatch(setFilters({ category: [] }));
+      }
+      setSelectAllCategories(checked);
+    } else {
+      const updatedCategories = checked
       ? [...filters.category, value]
       : filters.category.filter((category) => category !== value);
-
+      
       dispatch(setFilters({ category: updatedCategories }));
+    }
   };
 
   const handleSearch = () => {
@@ -48,6 +68,7 @@ const MainMenu = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    dispatch(fetchCategories());
   };
 
   const handleDelete = (productId: number) => {
@@ -93,32 +114,24 @@ const MainMenu = () => {
             <label>
               <input 
               type="checkbox" 
-              value="food" 
-              checked={filters.category.includes("food")} 
+              value="all" 
+              checked={selectAllCategories} 
               onChange={handleCategoryChange}
               />
-              Food
+              All
             </label>
 
-            <label>
-              <input 
-              type="checkbox" 
-              value="electronics"
-              checked={filters.category.includes("electronics")} 
-              onChange={handleCategoryChange}
-              />
-              Electronics
-            </label>
-
-            <label>
-              <input 
-              type="checkbox"
-              value="clothing"
-              checked={filters.category.includes("clothing")}
-              onChange={handleCategoryChange}
-              />
-              Clothing
-            </label>
+            {categories.map((category) => (
+              <label key={category}>
+                <input
+                  type="checkbox"
+                  value={category}
+                  checked={filters.category.includes(category)}
+                  onChange={handleCategoryChange}
+                />
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </label>
+            ))}
           </div>
         </div>
 
