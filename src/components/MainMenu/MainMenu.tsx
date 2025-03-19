@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './MainMenu.css';
 import { AppDispatch, RootState } from '../../state/store';
-import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock, fetchCategories } from '../../state/product/productSlice';
+import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock, fetchCategories, getMetrics } from '../../state/product/productSlice';
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
 import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
@@ -72,16 +72,20 @@ const MainMenu = () => {
     dispatch(fetchCategories());
   };
 
-  const handleDelete = (productId: number) => {
-    dispatch(deleteProduct(productId));
+  const handleDelete = async (productId: number) => {
+    await dispatch(deleteProduct(productId));
+    await dispatch(fetchProducts({}));
+    await dispatch(getMetrics());
   }
 
-  const handleStockChange = (product: Product) => {
+  const handleStockChange = async (product: Product) => {
     if (product.quantityInStock > 0) {
-      dispatch(setProductOutOfStock(product.id));
+      await dispatch(setProductOutOfStock(product.id));
     } else {
-      dispatch(setProductInStock(product.id));
+      await dispatch(setProductInStock(product.id));
     }
+    await dispatch(fetchProducts({}));
+    await dispatch(getMetrics());
   };
 
   const columns: TableColumn<Product>[] = [
