@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store";
 import './create_edit-Modal.css';
-import { createProduct, updateProduct, fetchCategories } from "../../state/product/productSlice";
+import { createProduct, updateProduct, fetchCategories, fetchProducts, getMetrics } from "../../state/product/productSlice";
 
 
 interface Product {
@@ -87,16 +87,19 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
     setFormData({ ...formData, category: categories.length > 0 ? categories[0] : '' });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log("Datos enviados al backend: ", formData);
 
     if (mode === 'create') {
-      dispatch(createProduct(formData));
+      await dispatch(createProduct(formData));
     } else if (mode === 'edit' && product?.id) {
-      dispatch(updateProduct({ ...formData, id: product.id }));
+      await dispatch(updateProduct({ ...formData, id: product.id }));
     }
+
+    await dispatch(fetchProducts({}));
+    await dispatch(getMetrics());
 
     onClose();
   };
