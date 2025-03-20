@@ -10,7 +10,7 @@ This is the frontend repository of the inventory management application. The app
 - 📑 **Sorting** of products by category, name, price, expiration date and stock.
 - 📈 **Inventory metrics** with global and category statistics.
 
-## 🛠️ Tecnologies Used
+## 🛠️ Technologies Used
 
 - Vite
 - React
