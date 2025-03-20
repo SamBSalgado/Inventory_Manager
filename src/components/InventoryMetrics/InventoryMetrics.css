@@ -1,0 +1,70 @@
+.inventory-metrics {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-metrics h2 {
+  color: #333333;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.metrics-table-container {
+  overflow-x: auto;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-table th,
+.metrics-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid #dddddd;
+}
+
+.metrics-table th {
+  background-color: #4a6fa5;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.metrics-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.metrics-table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.category-cell {
+  font-weight: 600;
+  text-align: left;
+}
+
+.metrics-loading,
+.metrics-error,
+.metrics-empty {
+  padding: 20px;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+.metrics-error {
+  color: #dc3545;
+}
+
+.metrics-empty {
+  color: #6c757d;
+}
