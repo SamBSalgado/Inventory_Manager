@@ -39,5 +39,8 @@ Este es el repositorio del frontend de la aplicación de administración de inve
 
 ## 📌 Notas Adicionales
 - Asegúrate de que el backend esté ejecutándose antes de probar la aplicación.
-- La aplicación se conecta con el backend desarrollado en **Spring Boot** usando **Maven**.
+- La aplicación se conecta con el backend desarrollado en **Spring Boot** usando **Maven**, ubicado en el siguiente repositorio:
+  ```sh
+  https://github.com/SamBSalgado/-Backend-Inventory_Manager.git
+  ```
 
