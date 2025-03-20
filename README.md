@@ -1,16 +1,16 @@
 # Inventory Manager - Frontend
 
-Este es el repositorio del frontend de la aplicación de administración de inventario. La aplicación permite gestionar productos, filtrarlos por diferentes criterios, ordenarlos y visualizar métricas de inventario en una interfaz intuitiva.
+This is the frontend repository of the inventory management application. The application allows you to manage products, filter them by different criteria, order them and visualize inventory metrics in an intuitive interface.
 
-## 🚀 Características
+## 🚀 Features
 
-- 🔍 **Búsqueda y filtrado** por nombre, categoría y disponibilidad en stock.
-- ➕ **Agregar nuevos productos** mediante un formulario interactivo.
-- 📊 **Tabla de productos** con opciones de edición, eliminación y ajuste de stock.
-- 📑 **Ordenación** de productos por categoría, nombre, precio, fecha de vencimiento y stock.
-- 📈 **Métricas de inventario** con estadísticas globales y por categoría.
+- 🔍 **Search and filter** by name, category and stock availability.
+- ➕ **Add new products** using an interactive form.
+- 📊 **Product table** with editing, deletion and stock adjustment options.
+- 📑 **Sorting** of products by category, name, price, expiration date and stock.
+- 📈 **Inventory metrics** with global and category statistics.
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Tecnologies Used
 
 - Vite
 - React
@@ -19,27 +19,27 @@ Este es el repositorio del frontend de la aplicación de administración de inve
 - TypeScript
 - CSS
 
-## ⚙️ Instalación y Configuración
+## ⚙️ Instalation and Configuration
 
-1. **Clonar el repositorio:**
+1. **Clone the repository:**
    ```sh
    git clone https://github.com/SamBSalgado/Inventory_Manager.git
    ```
 
-2. **Instalar dependencias:**
+2. **Install dependencies:**
    ```sh
    npm install
    ```
 
-3. **Ejecutar el servidor de desarrollo:**
+3. **Run the development server:**
    ```sh
    npm run start
    ```
 
 
-## 📌 Notas Adicionales
-- Asegúrate de que el backend esté ejecutándose antes de probar la aplicación.
-- La aplicación se conecta con el backend desarrollado en **Spring Boot** usando **Maven**, ubicado en el siguiente repositorio:
+## 📌 Aditional notes
+- Make sure the backend is running before testing the app.
+- The application connects to the backend developed in **Spring Boot** using **Maven**, located in the following repository:
   ```sh
   https://github.com/SamBSalgado/-Backend-Inventory_Manager.git
   ```
