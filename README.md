@@ -37,7 +37,7 @@ This is the frontend repository of the inventory management application. The app
    ```
 
 
-## 📌 Aditional notes
+## 📌 Aditional Notes
 - Make sure the backend is running before testing the app.
 - The application connects to the backend developed in **Spring Boot** using **Maven**, located in the following repository:
   ```sh
