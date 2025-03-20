@@ -12,7 +12,12 @@ Este es el repositorio del frontend de la aplicación de administración de inve
 
 ## 🛠️ Tecnologías Utilizadas
 
-- 
+- Vite
+- React
+- Redux Toolkit
+- React-Data-Table-Component library
+- TypeScript
+- CSS
 
 ## ⚙️ Instalación y Configuración
 
