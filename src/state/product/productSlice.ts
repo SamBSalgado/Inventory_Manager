@@ -52,12 +52,10 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
         state.loading = false;
         state.products = action.payload;
-        console.log("fetch finished.")
       })
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
-        console.log("getting products is PENDING...");
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
@@ -66,7 +64,6 @@ const productsSlice = createSlice({
       .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<string[]>) => {
         state.loading = false;
         state.categories = action.payload;
-        console.log("CATEGORIES fetched.");
       })
       .addCase(fetchCategories.pending, (state) => {
         state.loading = true;
@@ -79,7 +76,6 @@ const productsSlice = createSlice({
       .addCase(createProduct.fulfilled, (state) => {
         state.loading = false;
         state.error = null;
-        console.log("Product CREATED.");
       })
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
@@ -96,7 +92,6 @@ const productsSlice = createSlice({
           state.products[index] = action.payload;
         }
         state.error = null;
-        console.log("Stock actualizado a 10.");
       })
       .addCase(setProductInStock.pending, (state) => {
         state.loading = true;
@@ -113,7 +108,6 @@ const productsSlice = createSlice({
         if (index !== -1) {
           state.products[index] = action.payload;
         }
-        console.log("Stock actualizado a 0.");
       })
       .addCase(setProductOutOfStock.pending, (state) => {
         state.loading = true;
@@ -130,7 +124,6 @@ const productsSlice = createSlice({
           state.products[index] = action.payload;
         }
         state.error = null;
-        console.log("Producto MODIFICADO.");
       })
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
@@ -157,7 +150,6 @@ const productsSlice = createSlice({
         state.error = null;
         state.loading = false;
         state.products = state.products.filter(product => product.id !== action.payload);
-        console.log("Producto eliminado.");
       })
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
