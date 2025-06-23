@@ -10,8 +10,10 @@ const InventoryMetrics: React.FC = () => {
   const { metrics, loading, error } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
-    dispatch(getMetrics());
-  }, [dispatch]);
+    if (metrics.length === 0) {
+      dispatch(getMetrics());
+    }
+  }, [dispatch, metrics]);
 
   if (loading) {
     return <div className="metrics-loading">Cargando métricas...</div>;
