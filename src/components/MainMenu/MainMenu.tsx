@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './MainMenu.css';
 import { AppDispatch, RootState } from '../../state/store';
-import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock, fetchCategories, getMetrics } from '../../state/product/productSlice';
+import { fetchProducts, setFilters, Product, deleteProduct, setProductInStock, setProductOutOfStock, fetchCategories, getMetrics, createProduct, updateProduct } from '../../state/product/productSlice';
 import React, { useEffect, useState } from 'react';
 import ProductModal from '../../modals/create_edit/create_edit-Modal';
 import InventoryMetrics from '../InventoryMetrics/InventoryMetrics';
@@ -31,6 +31,17 @@ const MainMenu = () => {
       setSelectAllCategories(false);
     }
   }, [filters.category, categories]);
+
+  const handleModalSubmit = async (data: Product) => {
+    if (modalMode === "create") {
+      await dispatch(createProduct(data));
+    } else if (modalMode === "edit" && data.id) {
+      await dispatch(updateProduct(data));
+    }
+
+    await dispatch(fetchProducts({}));
+    await dispatch(getMetrics());
+  };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -73,12 +84,20 @@ const MainMenu = () => {
   };
 
   const handleDelete = async (productId: number) => {
+    if (productId === undefined) {
+      return
+    }
+    
     await dispatch(deleteProduct(productId));
     await dispatch(fetchProducts({}));
     await dispatch(getMetrics());
   }
 
   const handleStockChange = async (product: Product) => {
+    if (product.id === undefined) {
+      return
+    }
+
     if (product.quantityInStock > 0) {
       await dispatch(setProductOutOfStock(product.id));
     } else {
@@ -149,7 +168,11 @@ const MainMenu = () => {
           </button>
           <button
             className="delete-btn"
-            onClick={() => handleDelete(row.id)}
+            onClick={() => {
+              if (row.id !== undefined) {
+                handleDelete(row.id)
+              }
+            }}
           >
             Delete
           </button>
@@ -286,8 +309,10 @@ const MainMenu = () => {
       <ProductModal 
         isOpen={isModalOpen}
         onClose={closeModal}
-        product={selectedProduct}
+        product={selectedProduct ?? undefined}
         mode={modalMode}
+        categories={categories}
+        onSubmit={handleModalSubmit}
       />
 
       <div className='metrics-section'>
