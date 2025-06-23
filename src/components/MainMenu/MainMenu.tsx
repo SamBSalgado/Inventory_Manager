@@ -218,15 +218,6 @@ const MainMenu = () => {
     selectAllRowsItemText: 'All',
   };
 
-  // const handleClearFilters = () => {
-  //   dispatch(setFilters({ name: "", category: [], availability: "" }));
-  //   setHasSearched(false);
-  //   dispatch(fetchProducts({}));
-  // };
-  // const [name, setName] = useState("");
-  // const [categories, setCategories] = useState<string[]>([]);
-  // const [availability, setAvailability] = useState("");
-
   return (
     <div className="main-menu">
       <div className='filters'>

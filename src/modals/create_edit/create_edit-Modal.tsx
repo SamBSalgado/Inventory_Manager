@@ -1,19 +1,7 @@
 import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { AppDispatch, RootState } from "../../state/store";
 import './create_edit-Modal.css';
 import { Product } from "../../state/product/productSlice";
 import { useProductForm } from "../../hooks/ProductForm";
-
-
-// interface Product {
-//   id?: number;
-//   name: string;
-//   category: string;
-//   quantityInStock: number;
-//   unitPrice: number;
-//   expirationDate?: string;
-// }
 
 interface productModalProps {
   isOpen: boolean;
@@ -25,8 +13,6 @@ interface productModalProps {
 }
 
 const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, mode, categories, onSubmit }) => {
-  // const dispatch = useDispatch<AppDispatch>();
-  // const categories = useSelector((state: RootState) => state.product.categories);
   const [newCategory, setNewCategory] = useState<string>("");
   const [showNewCategoryInput, setShowNewcategoryInput] = useState<boolean>(false);
 
@@ -35,12 +21,6 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
     categories,
     onCategoryNewSelected: () => setShowNewcategoryInput(true)
   });
-
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     dispatch(fetchCategories());
-  //   }
-  // }, [isOpen, dispatch]);
 
   useEffect(() => {
     if (mode == 'edit' && product) {
@@ -71,29 +51,7 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
 
   const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCategory(e.target.value);
-
-    // if (name === 'quantityInStock' || name === 'unitPrice') {
-    //   setFormData({ ...formData, [name]: Number(value) });
-    // } else if (name === 'name' && value.length > 120) {
-    //   setFormData({ ...formData, [name]: value.slice(0, 120) });
-    // } else if (name === 'category' && value === 'new') {
-    //   setShowNewcategoryInput(true);
-    // } else {
-    //   setFormData({ ...formData, [name]: value });
-    // }
   };
-
-  // const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNewCategory(e.target.value);
-  // };
-
-  // const handleAddNewCategory = () => {
-  //   if (newCategory.trim()) {
-  //     setFormData({ ...formData, category: newCategory.trim() });
-  //     setShowNewcategoryInput(false);
-  //     setNewCategory("");
-  //   }
-  // };
 
   const cancelNewcategory = () => {
     setShowNewcategoryInput(false);
@@ -114,19 +72,6 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
 
     onSubmit(finalFormData);
     onClose();
-
-    // console.log("Datos enviados al backend: ", formData);
-
-    // if (mode === 'create') {
-    //   await dispatch(createProduct(formData));
-    // } else if (mode === 'edit' && product?.id) {
-    //   await dispatch(updateProduct({ ...formData, id: product.id }));
-    // }
-
-    // await dispatch(fetchProducts({}));
-    // await dispatch(getMetrics());
-
-    // onClose();
   };
 
   if (!isOpen) {
