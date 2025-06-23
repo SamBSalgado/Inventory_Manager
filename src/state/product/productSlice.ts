@@ -61,7 +61,7 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error desconocido.";
+        state.error = action.payload || "Error desconocido.";
       })
       .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<string[]>) => {
         state.loading = false;
@@ -74,7 +74,7 @@ const productsSlice = createSlice({
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error al obtener las categorías.";
+        state.error = action.payload || "Error al obtener las categorías.";
       })
       .addCase(createProduct.fulfilled, (state) => {
         state.loading = false;
@@ -87,7 +87,7 @@ const productsSlice = createSlice({
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = true;
-        state.error = action.error.message || "Error al crear el producto.";
+        state.error = action.payload || "Error al crear el producto.";
       })
       .addCase(setProductInStock.fulfilled, (state, action: PayloadAction<Product>) => {
         state.loading = false;
@@ -104,7 +104,7 @@ const productsSlice = createSlice({
       })
       .addCase(setProductInStock.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error al actualizar el stock a 10.";
+        state.error = action.payload || "Error al actualizar el stock a 10.";
       })
       .addCase(setProductOutOfStock.fulfilled, (state, action: PayloadAction<Product>) => {
         state.loading = false;
@@ -121,7 +121,7 @@ const productsSlice = createSlice({
       })
       .addCase(setProductOutOfStock.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error al actualizar el stock a 0.";
+        state.error = action.payload || "Error al actualizar el stock a 0.";
       })
       .addCase(updateProduct.fulfilled, (state, action: PayloadAction<Product>) => {
         state.loading = false;
@@ -138,7 +138,7 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error al modificar el producto.";
+        state.error = action.payload || "Error al modificar el producto.";
       })
       .addCase(getMetrics.fulfilled, (state, action) => {
         state.loading = false;
@@ -165,74 +165,98 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error al eliinar el producto.";
+        state.error = action.payload || "Error al eliinar el producto.";
       });
   }
 });
 
-export const fetchCategories = createAsyncThunk(
-  "products/fetchCategories",
-  async () => {
-    const response = await fetch("http://localhost:9090/products/categories");
-    if (!response.ok) {
-      throw new Error("Error al obtener categorías");
+export const fetchCategories = createAsyncThunk<
+  string[],
+  void,
+  { rejectValue: string }
+  >(
+    "products/fetchCategories",
+    async (_, { rejectWithValue }) => {
+      const response = await fetch("http://localhost:9090/products/categories");
+      if (!response.ok) {
+        return rejectWithValue("Error al obtener categorías");
+      }
+      return await response.json();
     }
-    return await response.json();
-  }
-);
+  );
 
-export const fetchProducts = createAsyncThunk(
-  "products/fetchProducts",
-  async (filters: { name?: string; category?: string[]; availability?: string }) => {
-    const queryParams = new URLSearchParams();
+export const fetchProducts = createAsyncThunk<
+  Product[],
+  { name?: string; category?: string[]; availability?: string },
+  { rejectValue: string }
+  >(
+    "products/fetchProducts",
+    async (filters, thunkAPI) => {
+      const { rejectWithValue } = thunkAPI;
+      const queryParams = new URLSearchParams();
 
-    if (filters.name) {
-      queryParams.append("name", filters.name);
-    }
-    if (filters.category && filters.category.length > 0) {
-      queryParams.append("category", filters.category.join(','));
-    }
-    if (filters.availability) {
-      queryParams.append("availability", filters.availability);
-    }
+      if (filters.name) {
+        queryParams.append("name", filters.name);
+      }
+      if (filters.category && filters.category.length > 0) {
+        queryParams.append("category", filters.category.join(','));
+      }
+      if (filters.availability) {
+        queryParams.append("availability", filters.availability);
+      }
 
-    const response = await fetch(`http://localhost:9090/products?${queryParams.toString()}`);
-    if (!response.ok) {
-      throw new Error("Error al obtener productos");
+      const response = await fetch(`http://localhost:9090/products?${queryParams.toString()}`);
+      if (!response.ok) {
+        return rejectWithValue("Error al obtener productos");
+      }
+      return await response.json();
     }
-    return await response.json();
-  }
-);
+  );
 
-export const setProductInStock = createAsyncThunk(
+export const setProductInStock = createAsyncThunk<
+Product,
+number,
+{ rejectValue: string }
+>(
   "products/setProductInStock",
-  async (productId: number) => {
+  async (productId, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
     const response = await fetch(`http://localhost:9090/products/${productId}/instock`, {
       method: 'PUT',
     });
     if (!response.ok) {
-      throw new Error("Error al actualizar el stock.");
+      return rejectWithValue("Error al actualizar el stock.");
     }
     return await response.json();
   }
 );
 
-export const setProductOutOfStock = createAsyncThunk(
+export const setProductOutOfStock = createAsyncThunk<
+Product,
+number,
+{ rejectValue: string }
+>(
   "products/setProductOutOfStock",
-  async(productId: number) => {
+  async(productId, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
     const response = await fetch(`http://localhost:9090/products/${productId}/outofstock`, {
       method: 'PUT',
     });
     if (!response.ok) {
-      throw new Error("Error al actualizar el stock.");
+      return rejectWithValue("Error al actualizar el stock.");
     }
     return await response.json();
   }
 );
 
-export const createProduct = createAsyncThunk(
+export const createProduct = createAsyncThunk<
+Product,
+Product,
+{ rejectValue: string }
+>(
   "products/createProduct",
-  async (productData: Product) => {
+  async (productData, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
     const response = await fetch('http://localhost:9090/products', {
       method: 'POST',
       headers: {
@@ -242,15 +266,20 @@ export const createProduct = createAsyncThunk(
     });
 
     if (!response.ok) {
-      throw new Error("Error al crear el producto.");
+      return rejectWithValue("Error al crear el producto.");
     }
     return await response.json();
   }
 );
 
-export const updateProduct = createAsyncThunk(
+export const updateProduct = createAsyncThunk<
+Product,
+Product,
+{ rejectValue: string }
+>(
   "products/updateProduct",
-  async (productData: Product) => {
+  async (productData, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
     const response = await fetch(`http://localhost:9090/products/${productData.id}`, {
       method: 'PUT',
       headers: {
@@ -260,33 +289,41 @@ export const updateProduct = createAsyncThunk(
     });
 
     if (!response.ok) {
-      throw new Error("Error al modificar el producto.");
+      return rejectWithValue("Error al modificar el producto.");
     }
     return await response.json();
   }
 );
 
-export const deleteProduct = createAsyncThunk(
+export const deleteProduct = createAsyncThunk<
+number,
+number,
+{ rejectValue: string }
+>(
   "products/deleteProduct",
-  async (productId: number) => {
+  async (productId, { rejectWithValue }) => {
     const response = await fetch(`http://localhost:9090/products/${productId}`, {
       method: 'DELETE',
     });
 
     if (!response.ok) {
-      throw new Error("Error al eliminar el producto.");
+      return rejectWithValue("Error al eliminar el producto.");
     }
     return productId;
   }
 );
 
-export const getMetrics = createAsyncThunk(
+export const getMetrics = createAsyncThunk<
+Metrics[],
+void,
+{ rejectValue: string }
+>(
   'products/getMetrics',
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch('http://localhost:9090/products/metrics');
       if (!response.ok) {
-        throw new Error("Error al obtener las métricas.");
+        return rejectWithValue("Error al obtener las métricas.");
       }
       const data = await response.json();
       return data;
