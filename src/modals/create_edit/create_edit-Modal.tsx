@@ -1,85 +1,99 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../state/store";
+// import { useDispatch, useSelector } from "react-redux";
+// import { AppDispatch, RootState } from "../../state/store";
 import './create_edit-Modal.css';
-import { createProduct, updateProduct, fetchCategories, fetchProducts, getMetrics } from "../../state/product/productSlice";
+import { Product } from "../../state/product/productSlice";
+import { useProductForm } from "../../hooks/ProductForm";
 
 
-interface Product {
-  id?: number;
-  name: string;
-  category: string;
-  quantityInStock: number;
-  unitPrice: number;
-  expirationDate?: string;
-}
+// interface Product {
+//   id?: number;
+//   name: string;
+//   category: string;
+//   quantityInStock: number;
+//   unitPrice: number;
+//   expirationDate?: string;
+// }
 
 interface productModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: Product | null;
+  categories: string[];
+  onSubmit: (data: Product) => void;
   mode: 'create' | 'edit';
 }
 
-const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, mode }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const categories = useSelector((state: RootState) => state.product.categories);
+const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, mode, categories, onSubmit }) => {
+  // const dispatch = useDispatch<AppDispatch>();
+  // const categories = useSelector((state: RootState) => state.product.categories);
   const [newCategory, setNewCategory] = useState<string>("");
   const [showNewCategoryInput, setShowNewcategoryInput] = useState<boolean>(false);
 
-  const [formData, setFormData] = useState<Product>({
-    name: '',
-    category: '',
-    quantityInStock: 0,
-    unitPrice: 0,
-    expirationDate: '',
+  const {formData, setFormData, handleChange} = useProductForm({
+    initialData: product ?? undefined,
+    categories,
+    onCategoryNewSelected: () => setShowNewcategoryInput(true)
   });
 
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(fetchCategories());
-    }
-  }, [isOpen, dispatch]);
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     dispatch(fetchCategories());
+  //   }
+  // }, [isOpen, dispatch]);
 
   useEffect(() => {
     if (mode == 'edit' && product) {
       setFormData({ ...product });
     } else {
       setFormData({
+        id: undefined,
         name: '',
-        category: categories.length > 0 ? categories[0] : '',
+        category: categories.length > 0 ? categories[0] : 'no-category',
         quantityInStock: 0,
         unitPrice: 0,
         expirationDate: '',
       });
     }
-  }, [product, mode, isOpen, categories]);
+    setShowNewcategoryInput(false);
+    setNewCategory("");
+  }, [product, mode, isOpen, categories, setFormData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    if (name === 'quantityInStock' || name === 'unitPrice') {
-      setFormData({ ...formData, [name]: Number(value) });
-    } else if (name === 'name' && value.length > 120) {
-      setFormData({ ...formData, [name]: value.slice(0, 120) });
-    } else if (name === 'category' && value === 'new') {
+  const handleCategorySelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    if (value === "new") {
       setShowNewcategoryInput(true);
+      setFormData({ ...formData, category: value });
     } else {
-      setFormData({ ...formData, [name]: value });
+      handleChange(e);
     }
   };
 
   const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCategory(e.target.value);
+
+    // if (name === 'quantityInStock' || name === 'unitPrice') {
+    //   setFormData({ ...formData, [name]: Number(value) });
+    // } else if (name === 'name' && value.length > 120) {
+    //   setFormData({ ...formData, [name]: value.slice(0, 120) });
+    // } else if (name === 'category' && value === 'new') {
+    //   setShowNewcategoryInput(true);
+    // } else {
+    //   setFormData({ ...formData, [name]: value });
+    // }
   };
 
-  const handleAddNewCategory = () => {
-    if (newCategory.trim()) {
-      setFormData({ ...formData, category: newCategory.trim() });
-      setShowNewcategoryInput(false);
-      setNewCategory("");
-    }
-  };
+  // const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setNewCategory(e.target.value);
+  // };
+
+  // const handleAddNewCategory = () => {
+  //   if (newCategory.trim()) {
+  //     setFormData({ ...formData, category: newCategory.trim() });
+  //     setShowNewcategoryInput(false);
+  //     setNewCategory("");
+  //   }
+  // };
 
   const cancelNewcategory = () => {
     setShowNewcategoryInput(false);
@@ -90,18 +104,29 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Datos enviados al backend: ", formData);
+    const finalFormData = showNewCategoryInput
+      ? { ...formData, category: newCategory.trim() }
+      : formData;
 
-    if (mode === 'create') {
-      await dispatch(createProduct(formData));
-    } else if (mode === 'edit' && product?.id) {
-      await dispatch(updateProduct({ ...formData, id: product.id }));
-    }
+      if (finalFormData.category === 'no-category') {
+        finalFormData.category = '';
+      }
 
-    await dispatch(fetchProducts({}));
-    await dispatch(getMetrics());
-
+    onSubmit(finalFormData);
     onClose();
+
+    // console.log("Datos enviados al backend: ", formData);
+
+    // if (mode === 'create') {
+    //   await dispatch(createProduct(formData));
+    // } else if (mode === 'edit' && product?.id) {
+    //   await dispatch(updateProduct({ ...formData, id: product.id }));
+    // }
+
+    // await dispatch(fetchProducts({}));
+    // await dispatch(getMetrics());
+
+    // onClose();
   };
 
   if (!isOpen) {
@@ -136,19 +161,19 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
               <select
                 id="category"
                 name="category"
-                value={formData.category}
-                onChange={handleChange}
+                value={formData.category === "new" ? "new": formData.category}
+                onChange={handleCategorySelectChange}
                 required
               >
                 {categories.length > 0 ? (
                   categories.map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
-                  ))
-                ) : (
-                  <option value="">No categories available</option>
-                )}
-                <option value="new">+ Add new category</option>
-                </select>
+                ))
+              ): (
+                <option value="no-category">No categories available</option>
+              )}
+              <option value="new">+ Add new category</option>
+              </select>
             ) : (
               <div className="new-category-container">
                 <input
@@ -158,12 +183,17 @@ const ProductModal: React.FC<productModalProps> = ({ isOpen, onClose, product, m
                 onChange={handleNewCategoryChange}
                 placeholder="Enter new category name"
                 required
+                autoFocus
                 />
                 <div className="new-category-actions">
-                  <button type="button" onClick={handleAddNewCategory}>Add</button>
                   <button type="button" onClick={cancelNewcategory}>Cancel</button>
                 </div>
               </div>
+            )}
+            {showNewCategoryInput && (
+              <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                New category: {newCategory.trim() || '[Enter category name]'}
+              </small>
             )}
           </div>
           
